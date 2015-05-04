@@ -169,30 +169,6 @@ void update_display(PblTm *current_time) {
     
     set_container_image(&time_digits_images[2], BIG_DIGIT_IMAGE_RESOURCE_IDS[current_time->tm_min/10], GPoint(86, 30));
     set_container_image(&time_digits_images[3], BIG_DIGIT_IMAGE_RESOURCE_IDS[current_time->tm_min%10], GPoint(110, 30));
-    
-    unsigned int unix_time;
-    /* Convert time to seconds since epoch. */
-    unix_time = ((0-TIME_ZONE_OFFSET)*3600) + /* time zone offset */
-    + current_time->tm_sec /* start with seconds */
-    + current_time->tm_min*60 /* add minutes */
-    + current_time->tm_hour*3600 /* add hours */
-    + current_time->tm_yday*86400 /* add days */
-    + (current_time->tm_year-70)*31536000 /* add years since 1970 */
-    + ((current_time->tm_year-69)/4)*86400 /* add a day after leap years, starting in 1973 */
-    - ((current_time->tm_year-1)/100)*86400 /* remove a leap day every 100 years, starting in 2001 */
-    + ((current_time->tm_year+299)/400)*86400; /* add a leap day back every 400 years, starting in 2001*/
-    
-    /* Draw each digit in the correct location. */
-    for(int i=0; i<TOTAL_DIGITS; i++) {
-        
-        /* int digit_colum = i % TOTAL_COLUMNS; */
-        int denominator = my_pow(10,i); /* The loop starts at the most significant digit and goes down from there. */
-        int digit_value = (int)unix_time/(1000000000 / denominator); /* This gives the value for the current digit. (Casting should give us the floor of the value.) */
-        unix_time = unix_time % (1000000000 / denominator); /* This subtracts the value for the current digit so that it doesn't interfere with the next iteration of the loop. */
-        set_container_image(&digits[i], BLOCK_NUMBER[digit_value], GPoint(40 + (i * 9), 90)); /* Now we set this digit. */
-    }
-    
-    
 }
 
 
